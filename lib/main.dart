@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'math_operations_page.dart';
-import 'odd_even_page.dart';
-import 'group_data_page.dart';
+import 'package:kuiz/DataDiri.dart';
+import 'package:kuiz/HariPage.dart';
+import 'package:kuiz/Kubus.dart';
+import 'package:kuiz/Trapesium.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,219 +12,64 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginPage(),
+      home: MainMenu(),
     );
   }
 }
 
-class LoginPage extends StatefulWidget {
+class MainMenu extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _MainMenuState createState() => _MainMenuState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _MainMenuState extends State<MainMenu> {
+  int _selectedIndex = 0; // Index of the currently selected tab
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_usernameController.text == 'admin' && _passwordController.text == 'admin') {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainMenu()));
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      content: Text('Username atau Password salah!'),
-                    ),
-                  );
-                }
-              },
-              child: Text('Login'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class GroupDataPage extends StatelessWidget {
-  final List<Map<String, dynamic>> groupMembers = [
-    {"name": "Prima Maulana Hanan", "id": "123210073"},
-    {"name": "Ahlul Fadhly", "id": "123210091"},
+  // Define the pages corresponding to each tab
+  final List<Widget> _pages = [
+    DataDiri(),
+    Trapesium(),
+    Kubus(),
+    HariPage(),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Data Kelompok')),
-      body: ListView.builder(
-        itemCount: groupMembers.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(groupMembers[index]["name"]),
-            subtitle: Text(groupMembers[index]["id"]),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class MathOperationsPage extends StatefulWidget {
-  @override
-  _MathOperationsPageState createState() => _MathOperationsPageState();
-}
-
-class _MathOperationsPageState extends State<MathOperationsPage> {
-  final _num1Controller = TextEditingController();
-  final _num2Controller = TextEditingController();
-  String _result = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Penjumlahan dan Pengurangan')),
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _num1Controller,
-              decoration: InputDecoration(labelText: 'Angka Pertama'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: _num2Controller,
-              decoration: InputDecoration(labelText: 'Angka Kedua'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-              onPressed: () => _calculate(true),
-              child: Text('Jumlahkan'),
-            ),
-            ElevatedButton(
-              onPressed: () => _calculate(false),
-              child: Text('Kurangkan'),
-            ),
-            Text(
-              'Hasil: $_result',
-              style: TextStyle(fontSize: 20),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _calculate(bool isAddition) {
-    final num1 = double.tryParse(_num1Controller.text) ?? 0;
-    final num2 = double.tryParse(_num2Controller.text) ?? 0;
-    final result = isAddition ? num1 + num2 : num1 - num2;
+  // Function to handle tab selection
+  void _onItemTapped(int index) {
     setState(() {
-      _result = result.toString();
+      _selectedIndex = index;
     });
   }
-}
-
-class OddEvenPage extends StatefulWidget {
-  @override
-  _OddEvenPageState createState() => _OddEvenPageState();
-}
-
-class _OddEvenPageState extends State<OddEvenPage> {
-  final _numberController = TextEditingController();
-  String _result = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Cek Ganjil Genap')),
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: _numberController,
-              decoration: InputDecoration(labelText: 'Masukkan Bilangan'),
-              keyboardType: TextInputType.number,
-            ),
-            ElevatedButton(
-              onPressed: _checkOddEven,
-              child: Text('Cek'),
-            ),
-            Text(
-              'Hasil: $_result',
-              style: TextStyle(fontSize: 20),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _checkOddEven() {
-    final number = int.tryParse(_numberController.text);
-    if (number == null) {
-      setState(() {
-        _result = 'Masukkan bilangan yang valid!';
-      });
-      return;
-    }
-
-    setState(() {
-      _result = number % 2 == 0 ? 'Bilangan Genap' : 'Bilangan Ganjil';
-    });
-  }
-}
-
-class MainMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Main Menu'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          ListTile(
-            title: Text('Data Kelompok'),
-            onTap: () {
-              // Tampilkan data kelompok
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => GroupDataPage()));
-            },
+      body: _pages[_selectedIndex], // Display the selected page
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            backgroundColor: Color.fromARGB(255, 60, 81, 201),
+            label: 'Data Diri',
           ),
-          ListTile(
-            title: Text('Penjumlahan dan Pengurangan'),
-            onTap: () {
-              // Navigasi ke halaman penjumlahan dan pengurangan
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => MathOperationsPage()));
-            },
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            backgroundColor: Color.fromARGB(255, 60, 81, 201),
+            label: 'Trapesium',
           ),
-          ListTile(
-            title: Text('Cek Ganjil Genap'),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => OddEvenPage()));
-            },
+          BottomNavigationBarItem(
+            icon: Icon(Icons.crop_square_sharp),
+            backgroundColor: Color.fromARGB(255, 60, 81, 201),
+            label: 'Kubus',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            backgroundColor: Color.fromARGB(255, 60, 81, 201),
+            label: 'Hari',
           ),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.white,
+        onTap: _onItemTapped,
       ),
     );
   }
